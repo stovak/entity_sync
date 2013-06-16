@@ -1,0 +1,15 @@
+name = Entity Sync Push
+description = CRUD for enttiy holding remote information & local deployment ref
+core = 7.x
+package = entity_sync
+project = entity_sync
+
+dependencies[] = libraries
+dependencies[] = entity
+dependencies[] = entity_sync
+dependencies[] = entity_sync_deployment
+
+
+files[] = "EntitySyncPush.php"
+files[] = "EntitySyncPushController.php"
+files[] = "EntitySyncPushUIController.php"

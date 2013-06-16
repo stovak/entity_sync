@@ -1,12 +1,12 @@
 <?php
   
-function entity_sync_deployment_schema() {
+function entity_sync_push_schema() {
   
-  $schema['entity_sync_deployment'] = array(
-    'description' => 'Stores information about local entities to be able to pull entity data from remote source.',
+  $schema['entity_sync_push'] = array(
+    'description' => 'Stores remote site login info and ref to local deployment group.',
     'fields' => array(
-      'did' => array(
-        'description' => 'The autoincrement primary key SSH key ID.',
+      'pid' => array(
+        'description' => 'The autoincrement primary key.',
         'type' => 'serial',
         'unsigned' => FALSE,
         'not null' => TRUE,
@@ -19,14 +19,14 @@ function entity_sync_deployment_schema() {
         'default' => NULL,
       ),
       'title' => array(
-        'description' => 'The nickname of the key file.',
+        'description' => 'The nickname of deployment.',
         'type' => 'varchar',
         'length' => 128,
         'not null' => TRUE,
         'default' => ''
       ),
       'created' => array(
-        'description' => 'The time that the key was created, as a UNIX timestamp.',
+        'description' => 'The time that the entity was created, as a UNIX timestamp.',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
@@ -39,46 +39,46 @@ function entity_sync_deployment_schema() {
         'default' => 0,
       ),
       'status' => array(
-        'description' => 'Is the key enabled or revoked?',
+        'description' => 'Is the entity enabled?',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
       ),
     ),
-    'primary key' => array('did'),
+    'primary key' => array('pid'),
     'indexes' => array(
-      'did' => array('did', 'vid'),
+      'did' => array('pid', 'vid'),
     ),
     'foreign keys' => array(
-      'deployment_revision' => array(
-        'table' => 'entity_sync_deployment_revision',
+      'push_revision' => array(
+        'table' => 'entity_sync_push_revision',
         'columns' => array('vid' => 'vid'),
       ),
-      'deployment_author' => array(
+      'push_author' => array(
         'table' => 'users',
         'columns' => array('uid' => 'uid'),
       ),
     ),
   );
   
-  $schema['entity_sync_deployment_revision'] = array(
-    'description' => 'Reveision information for remote entity pull.',
+  $schema['entity_sync_push_revision'] = array(
+    'description' => 'Reveision information for push.',
     'fields' => array(
-      'did' => array(
-        'description' => 'The id this revision belongs to',
+      'pid' => array(
+        'description' => 'primary key',
         'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'default' => 0,
       ),
       'vid' => array(
-        'description' => 'The primary identifier for this version.',
+        'description' => 'version id',
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
       'uid' => array(
-        'description' => 'keeps track of the user that created the revsion.',
+        'description' => 'user id',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
@@ -90,25 +90,57 @@ function entity_sync_deployment_schema() {
         'default' => 0,
       ),
       'status' => array(
-        'description' => 'Is the key enabled or revoked?',
+        'description' => 'Is the entity enabled?',
         'type' => 'int',
         'not null' => TRUE,
         'default' => 0,
       ),
+      'remote_uri' => array(
+        'description' => 'uri of remote drupal install to which this information will be pushed including base_path',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'remote_username' => array(
+        'description' => 'remote drupal install username',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'remote_password' => array(
+        'description' => 'remote drupal install password',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'did' => array(
+        'description' => 'deployment id to be used with the push',
+        'type' => 'int',
+        'length' => '',
+        'not null' => true,
+        'default' => 0
+      )
     ),
-    'primary key' => array('did'),
+    'primary key' => array('pid'),
     'indexes' => array(
-      'did' => array('did', 'vid'),
+      'pid' => array('pid', 'vid'),
     ),
     'foreign keys' => array(
-      'versioned_deployment' => array(
-        'table' => 'entity_sync_deployment',
-        'columns' => array('did' => 'did'),
+      'versioned_push' => array(
+        'table' => 'entity_sync_push',
+        'columns' => array('pid' => 'pid'),
       ),
       'version_author' => array(
         'table' => 'users',
         'columns' => array('uid' => 'uid'),
       ),
+      'deployment_id' => array(
+        'table' => 'entity_sync_deployment',
+        'columns' => array('did' => 'did'),
+      )
     ),
   );
 

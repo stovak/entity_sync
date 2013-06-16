@@ -1,0 +1,44 @@
+<?php
+  
+class EntitySyncYamlTestCase extends DrupalWebTestCase {
+  
+  private $normal_user;
+  private $admin_user;
+  
+  public static function getInfo() {
+    return array(
+      'name' => t('Tests Entity Sync YAML'),
+      'description' => t('CRUD operations for YAML module.'),
+      'group' => t('Entity Sync'),
+    );
+  }
+  
+  public function setUp() {
+    // load dependencies from nebula_tests.info
+    parent::setUp(array("entity_sync_yaml"));
+    $this->normal_user = $this->drupalCreateUser(array('view own SSH public keys', 'manage own SSH public keys', 'access user profiles'));
+    $this->admin_user = $this->drupalCreateUser(array('administer users', 'administer SSH public keys'));
+   }
+   /**
+    * TEST: https://apigeesc.atlassian.net/browse/OPS-116
+    *
+    * @return void
+    * @author Tom Stovall
+    */
+   public function testLookupByUUID(){
+     
+   }
+   
+   public function testView() {
+   }
+   
+   public function testCreate() {  
+   }
+   
+   public function testUpdate() {
+     
+   }
+   
+   
+   
+ }

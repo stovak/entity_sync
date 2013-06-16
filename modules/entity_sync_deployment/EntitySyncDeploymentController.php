@@ -1,7 +1,7 @@
 <?php
   
   
-class EntitySyncDeployment extends EntityAPIController {
+class EntitySyncDeploymentController extends EntityAPIController {
   
   
   

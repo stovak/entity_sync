@@ -1,5 +1,5 @@
 name = Entity Sync YAML
-description = Export entity by UUID as YAML
+description = Export/Import/Update entity by UUID as YAML
 core = 7.x
 package = entity_sync
 project = entity_sync

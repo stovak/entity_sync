@@ -1,6 +1,6 @@
 <?php
   
-class EntitySyncDeploymentUIController extends UICommon {
+class EntitySyncPushUIController extends UICommon {
   
   
 }

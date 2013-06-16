@@ -1,21 +1,7 @@
 <?php
 
 /**
- *  * Providing a field requires:
- * - Defining a field:
- *   - hook_field_info()
- *   - hook_field_schema()
- *   - hook_field_validate()
- *   - hook_field_is_empty()
- *
- * - Defining a formatter for the field (the portion that outputs the field for
- *   display):
- *   - hook_field_formatter_info()
- *   - hook_field_formatter_view()
- *
- * - Defining a widget for the edit form:
- *   - hook_field_widget_info()
- *   - hook_field_widget_form()
+ *  
  */
 
 function entity_sync_deployment_entities_info() {
@@ -25,6 +11,7 @@ function entity_sync_deployment_entities_info() {
     'label'                      => t('Entity Sync Deployment'),
     'base table'                 => "entity_sync_deployment",
     'revision table'             => "entity_sync_deployment_revision",
+    'description'                => "A 'deployment' is a group of entities that can be pulled from another Drupal Installation.",
     'entity keys'                => array(
       'id'                       => 'did',
       'label'                    => 'title',

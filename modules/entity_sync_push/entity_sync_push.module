@@ -1,0 +1,45 @@
+<?php
+
+/**
+ *  
+ */
+
+function entity_sync_push_entities_info() {
+  $items = array();
+  $path = drupal_get_path("module", "entity_sync_push");
+  $items['entity_sync_push'] = array(
+    'label'                      => t('Entity Sync Push'),
+    'base table'                 => "entity_sync_push",
+    'revision table'             => "entity_sync_push_revision",
+    'description'                => "A 'push' is a deployment's connection with a remote Drupal site.",
+    'entity keys'                => array(
+      'id'                       => 'pid',
+      'label'                    => 'title',
+      'status'                   => 'status',
+      'revision'                 => 'vid',
+    ),
+    'translation' => array(
+      'locale' => false,
+    ),
+    'access_callback'            => 'entity_sync_push_access',
+    'fieldable'                  => TRUE,
+    'entity class'               => 'EntitySyncPush',
+    'controller class'           => 'EntitySyncPushController',
+    "admin ui"                   => array(
+      "path"                     => "entity_sync/push",
+      "controller class"         => 'EntitySyncPushUIController',
+      'menu wildcard'            => '%entity_sync_push',
+      'overview form uri'        => 'entity_sync/pushes'
+    ),
+    'bundles'                    => array(
+      'entity_sync_push'    => array(
+        'label'                  => t('Entity Sync Push')
+      ),
+    ),
+  );
+  
+  return $items;
+}
+
+
+
