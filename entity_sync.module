@@ -65,3 +65,19 @@ function entity_sync_views_plugins() {
   return $plugins;
 }
 
+function entity_sync_field_widget_info() {
+  $items = array();
+  
+  $items['entity_sync_entity_browser'] = array(
+    "label" => "Entity Sync Entity Browser",
+    "description" => "Allows multi-entity browsing for Deployments",
+    "field_types" => array("entityreference"),
+    "settings" => array(),
+    'behaviors' => array(
+      'multiple values' => FIELD_BEHAVIOR_DEFAULT,
+      'default value' => FIELD_BEHAVIOR_DEFAULT,
+    ),
+  );
+  
+  return $items;
+}

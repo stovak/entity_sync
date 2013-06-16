@@ -17,26 +17,28 @@ function entity_sync_yaml_menu() {
 }
 
 function entity_sync_yaml_access($op, $entity_type, $uuid) {
-  return entity_access($op, $entity_type, entity_sync_load_entity_by_uuid($uuid));
+  return entity_access($op, $entity_type, entity_sync_load_yaml_entity_by_uuid($uuid));
 }
 
 // example UUID: a3181cdc-6b5c-3854-6daa-b02b78218036
 
 function entity_sync_yaml($op, $entity_type, $uuid) {
   require_once(libraries_get_path('symfony_yaml')."/Yaml.php");
+  
   switch($op) {
     
     case "update":
-      //todo: update existing entity
-      break;
-    
     case "create":
-      //todo: create previously unavailable entity
+      $entity = _entity_sync_yaml_get_entity_from_post($uuid);
+      $results = entity_save($entity_type, $entity);
+      echo Symfony\Component\Yaml\Yaml::dump($results, 2); 
+      
       break;
+
     
     case "view":
     default:
-      $entity = (array)entity_sync_load_entity_by_uuid($entity_type, $uuid);
+      $entity = (array)entity_sync_load_yaml_entity_by_uuid($entity_type, $uuid);
       echo Symfony\Component\Yaml\Yaml::dump($entity, 2); 
       exit();
     
@@ -44,7 +46,7 @@ function entity_sync_yaml($op, $entity_type, $uuid) {
 
 }
 
-function entity_sync_load_entity_by_uuid($entity_type, $uuid) {
+function entity_sync_load_yaml_entity_by_uuid($entity_type, $uuid) {
   $info = entity_get_info($entity_type);
   $q = db_query("select :id_name as id from :table where uuid=:uuid", 
     array(
@@ -61,4 +63,16 @@ function entity_sync_load_entity_by_uuid($entity_type, $uuid) {
     return array();
   }
   
+}
+
+function _entity_sync_yaml_get_entity_from_post($uuid) {
+  $existing = entity_sync_load_yaml_entity_by_uuid($uuid);
+  $entity = (object)Symfony\Component\Yaml\Yaml::parse($_REQUEST['entity_data']);
+  if (empty($entity)) {
+    return $existing;
+  }
+  if(!empty($existing) && is_object($existing)) {
+    $entity->original = $existing;
+  }
+  return $entity;
 }

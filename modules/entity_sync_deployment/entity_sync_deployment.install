@@ -115,5 +115,27 @@ function entity_sync_deployment_schema() {
   return $schema;
 }
 
+function entity_sync_deployment_install() {
+   if(!field_info_field('field_deployment_items')){
+     $field = array(
+         'field_name' => 'field_deployment_items',
+         'type' => 'entityreference',
+         'cardinality' => FIELD_CARDINALITY_UNLIMITED,
+         'translatable' => '0',
+       );
+       field_create_field($field);
 
+       $instance = array(
+         'field_name' => 'field_deployment_items',
+         'entity_type' => 'deployment',
+         'label' => 'Deployment Items',
+         'widget' => array(
+           'type' => 'entity_sync_entity_browser',
+         ),
+       );
+       field_create_instance($instance);
+   }
+  
+  
+}
 
