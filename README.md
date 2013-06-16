@@ -1,6 +1,8 @@
 #Entity Sync
 
-Attempting to solve the age-old problem of syncing entities across Drupal installations. This modules creates a new entity called "deployment". In the deployment entity is entityreference field to point to entities in the deployment. 
+Attempting to solve the age-old problem of syncing entities across Drupal installations. This modules creates a new entity called "deployment". In the deployment entity is entityreference field to point to entities in the deployment. This deployment is sync'd with remote via the "push" entity. Push entity holds deployment ref and remote information. A diff screen will allow you to approve the changes in the deployment in totality on the remote. From the diff screen you can approve the push. A batch page applies the push. User is redirected to "journal" style log indicating status of changed nodes on remote.
+
+A copy of the deployment object is created on the remote and an entry in the log that the deployment object and it's nodes updated along with date/time and user info.
 
 ##Submodules:
 1. entity_sync_deployment - defines the "deployment" entity. Represents a group of entities that can be pushed
@@ -28,9 +30,9 @@ Attempting to solve the age-old problem of syncing entities across Drupal instal
   2. looks up current entity values
   3. uses diff module to show differences between local and remote
 1. Submit Push request to queue from diff screen
-1. Entities are published to remote
+1. Entities are published to remote along with local status
 
 ##Assumptions
 1. Entity type exists on both local and remote
-1. This module exists and is enabled on local and remote
+1. This module series exists and is enabled on local and remote
 1. No entity should ever be "deleted" from remote. "Unpublish" or "disable" only.
