@@ -1,0 +1,9 @@
+name = Entity Sync YAML
+description = Export entity by UUID as YAML
+core = 7.x
+package = entity_sync
+project = entity_sync
+
+dependencies[] = libraries
+dependencies[] = entity
+dependencies[] = entity_sync

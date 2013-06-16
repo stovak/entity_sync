@@ -1,0 +1,97 @@
+<?php
+  
+function entity_sync_deployment_schema() {
+  
+  $schema['entity_sync_deployment'] = array(
+    'description' => 'Stores information about local entities to be able to pull entity data from remote source.',
+    'fields' => array(
+      'did' => array(
+        'description' => 'The autoincrement primary key SSH key ID.',
+        'type' => 'serial',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+      ),
+      'vid' => array(
+        'description' => 'The current {key_revision}.vid version identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+      ),
+      'title' => array(
+        'description' => 'The nickname of the key file.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'created' => array(
+        'description' => 'The time that the key was created, as a UNIX timestamp.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Is the key enabled or revoked?',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('did'),
+  );
+  
+  $schema['entity_sync_deployment_revision'] = array(
+    'description' => 'Reveision information for remote entity pull.',
+    'fields' => array(
+      'did' => array(
+        'description' => 'The id this revision belongs to',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'vid' => array(
+        'description' => 'The primary identifier for this version.',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the revision was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Is the key enabled or revoked?',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('did'),
+    'indexes' => array(
+      'did' => array('did', 'vid'),
+    ),
+  );
+
+  return $schema;
+}
+
+
+
+function entity_sync_deployment_field_schema($field) {
+  $columns = array(
+    'entity_uuid' => array('type' => 'varchar', 'length' => 50, 'not null' => FALSE),
+    'entity_type' => array('type' => 'varchar', 'length' => 50, 'not null' => FALSE),
+  );
+  $indexes = array(
+    'uuid' => array('uuid'),
+  );
+  return array(
+    'columns' => $columns,
+    'indexes' => $indexes,
+  );
+}

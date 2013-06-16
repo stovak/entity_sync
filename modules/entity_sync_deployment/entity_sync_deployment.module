@@ -1,0 +1,91 @@
+<?php
+
+/**
+ *  * Providing a field requires:
+ * - Defining a field:
+ *   - hook_field_info()
+ *   - hook_field_schema()
+ *   - hook_field_validate()
+ *   - hook_field_is_empty()
+ *
+ * - Defining a formatter for the field (the portion that outputs the field for
+ *   display):
+ *   - hook_field_formatter_info()
+ *   - hook_field_formatter_view()
+ *
+ * - Defining a widget for the edit form:
+ *   - hook_field_widget_info()
+ *   - hook_field_widget_form()
+ */
+
+function entity_sync_deployment_entities_info() {
+  $items = array();
+  $path = drupal_get_path("module", "entity_sync_deployment");
+  $items['entity_sync_deployment'] = array(
+    'label'                      => t('Entity Sync Deployment'),
+    'base table'                 => "entity_sync_deployment",
+    'revision table'             => "entity_sync_deployment_revision",
+    'entity keys'                => array(
+      'id'                       => 'did',
+      'label'                    => 'title',
+      'status'                   => 'status',
+      'revision'                 => 'vid',
+    ),
+    'translation' => array(
+      'locale' => false,
+    ),
+    'access_callback'            => 'entity_sync_deployment_access',
+    'fieldable'                  => TRUE,
+    'entity class'               => 'EntitySyncDeployment',
+    'controller class'           => 'EntitySyncDeploymentController',
+    "admin ui"                   => array(
+      "path"                     => "entity_sync/deployment",
+      "controller class"         => 'EntitySyncDeploymentUIController',
+      'menu wildcard'            => '%entity_sync_deployment',
+      'overview form uri'        => 'entity_sync/deployments'
+    ),
+    'bundles'                    => array(
+      'entity_sync_deployment'    => array(
+        'label'                  => t('Entity Sync Deployment')
+      ),
+    ),
+  );
+  
+  return $items;
+}
+
+function entity_sync_deployment_field_info() {
+  return array(
+    // We name our field as the associative name of the array.
+    'field_deployment_item' => array(
+      'label' => t('Entity Sync Deployment Item'),
+      'description' => t('Reference field for entities in a deployment'),
+      'default_widget' => 'field_deployment_item_widget',
+      'default_formatter' => 'field_deployment_item_formatter',
+    ),
+  );
+}
+
+function entity_sync_deployment_field_validate() {
+  
+}
+
+function entity_sync_deployment_field_is_empty() {
+    
+}
+
+function entity_sync_deployment_field_formatter_info() {
+  
+}
+
+function entity_sync_deployment_field_formatter_view() {
+  
+}
+
+function entity_sync_deployment_field_widget_info() {
+  
+}
+
+function entity_sync_deployment_field_widget_form() {
+  
+}

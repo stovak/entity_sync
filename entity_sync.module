@@ -1,0 +1,67 @@
+<?php
+
+
+function entity_sync_boot() {
+  spl_autoload_register('entity_sync_autoload');
+}
+  
+/**
+ * Autoloader for Apigee\Nebula, Spyc and Symfony\Components\Yaml classes
+ *
+ * @param string $class
+ */
+function entity_sync_autoload($class) {
+  $class_path = NULL;
+  $path_parts = explode('\\', $class);
+  switch($path_parts[0]) {
+    
+    case "Apigee":
+      $lib_path = realpath(dirname(__FILE__) . '/lib');
+      $class_path = $lib_path . '/' . join('/', $path_parts) . '.php';
+      break;
+    
+    case "Symfony":
+      $path_parts = array_slice($path_parts, (count($path_parts) - 1));
+      $lib_path = libraries_get_path('symfony_yaml');
+      if ($lib_path) {
+        $class_path = $lib_path . '/' . join('/', $path_parts) . '.php';
+      }
+      break;
+      
+    case "Spyc":
+      $lib_path = libraries_get_path('spyc');
+      $class_path = $lib_path . '/spyc.php';
+      break;
+      
+    default:
+        
+  }
+  if (isset($class_path) && file_exists($class_path)) {
+    require_once($class_path);
+  }
+}
+
+function entity_sync_variable_group_info() {
+  $groups['entity_sync'] = array(
+    'title' => t('node sync Settings'),
+    'description' => t('Supporting syncing of nodes across Drupal Installations'),
+    'access' => 'administer site configuration',
+  );
+  return $groups;
+}
+
+
+/**
+ * Advertise the current views api version
+ */
+function entity_sync_api_version() {
+  return '3.0';
+}
+
+
+function entity_sync_views_plugins() {
+  $plugins = array();
+  
+  return $plugins;
+}
+

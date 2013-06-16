@@ -1,0 +1,15 @@
+name = Node Sync Deployment
+description = Data Entity to create Deployments
+core = 7.x
+package = node_sync
+project = node_sync
+
+dependencies[] = libraries
+dependencies[] = entity
+dependencies[] = node_sync
+
+files[]=node_sync_deployment.inc
+files[]=NodeSyncDeployment.php
+files[]=NodeSyncDeploymentController.php
+files[]=NodeSyncDeploymentUIController.php
+

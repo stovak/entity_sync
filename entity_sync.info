@@ -1,0 +1,9 @@
+name = Node Sync
+description = Synchronize nodes across multiple drupal installs
+core = 7.x
+package = node_sync
+project = node_sync
+
+dependencies[] = libraries
+dependencies[] = entity
+
