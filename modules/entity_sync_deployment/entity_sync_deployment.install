@@ -82,16 +82,3 @@ function entity_sync_deployment_schema() {
 
 
 
-function entity_sync_deployment_field_schema($field) {
-  $columns = array(
-    'entity_uuid' => array('type' => 'varchar', 'length' => 50, 'not null' => FALSE),
-    'entity_type' => array('type' => 'varchar', 'length' => 50, 'not null' => FALSE),
-  );
-  $indexes = array(
-    'uuid' => array('uuid'),
-  );
-  return array(
-    'columns' => $columns,
-    'indexes' => $indexes,
-  );
-}

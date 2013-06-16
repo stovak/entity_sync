@@ -54,38 +54,5 @@ function entity_sync_deployment_entities_info() {
   return $items;
 }
 
-function entity_sync_deployment_field_info() {
-  return array(
-    // We name our field as the associative name of the array.
-    'field_deployment_item' => array(
-      'label' => t('Entity Sync Deployment Item'),
-      'description' => t('Reference field for entities in a deployment'),
-      'default_widget' => 'field_deployment_item_widget',
-      'default_formatter' => 'field_deployment_item_formatter',
-    ),
-  );
-}
 
-function entity_sync_deployment_field_validate() {
-  
-}
 
-function entity_sync_deployment_field_is_empty() {
-    
-}
-
-function entity_sync_deployment_field_formatter_info() {
-  
-}
-
-function entity_sync_deployment_field_formatter_view() {
-  
-}
-
-function entity_sync_deployment_field_widget_info() {
-  
-}
-
-function entity_sync_deployment_field_widget_form() {
-  
-}
