@@ -10,7 +10,5 @@ dependencies[] = node_sync
 dependencies[] = entityreference
 
 files[]=node_sync_deployment.inc
-files[]=NodeSyncDeployment.php
-files[]=NodeSyncDeploymentController.php
-files[]=NodeSyncDeploymentUIController.php
+
 

@@ -15,7 +15,7 @@ function entity_sync_autoload($class) {
   $path_parts = explode('\\', $class);
   switch($path_parts[0]) {
     
-    case "Apigee":
+    case "Drupal":
       $lib_path = realpath(dirname(__FILE__) . '/lib');
       $class_path = $lib_path . '/' . join('/', $path_parts) . '.php';
       break;
@@ -36,6 +36,7 @@ function entity_sync_autoload($class) {
     default:
         
   }
+  xdebug_break();
   if (isset($class_path) && file_exists($class_path)) {
     require_once($class_path);
   }

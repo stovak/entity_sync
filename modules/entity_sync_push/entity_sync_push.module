@@ -6,7 +6,6 @@
 
 function entity_sync_push_entities_info() {
   $items = array();
-  $path = drupal_get_path("module", "entity_sync_push");
   $items['entity_sync_push'] = array(
     'label'                      => t('Entity Sync Push'),
     'base table'                 => "entity_sync_push",
@@ -23,11 +22,10 @@ function entity_sync_push_entities_info() {
     ),
     'access_callback'            => 'entity_sync_push_access',
     'fieldable'                  => TRUE,
-    'entity class'               => 'EntitySyncPush',
-    'controller class'           => 'EntitySyncPushController',
+    'entity class'               => 'Drupal\EntitySync\Push',
+    'controller class'           => 'Drupal\EntitySync\PushController',
     "admin ui"                   => array(
-      "path"                     => "entity_sync/push",
-      "controller class"         => 'EntitySyncPushUIController',
+      "controller class"         => 'Drupal\EntitySync\PushUIController',
       'menu wildcard'            => '%entity_sync_push',
       'overview form uri'        => 'entity_sync/pushes'
     ),

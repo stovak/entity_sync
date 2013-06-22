@@ -1,0 +1,6 @@
+*.DS_Store
+/modules/entity_sync_push/.DS_Store
+/modules/entity_sync_deployment/.DS_Store
+/lib/Drupal/EntitySync/.DS_Store
+/modules/.DS_Store
+/lib/.DS_Store

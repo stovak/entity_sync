@@ -1,0 +1,33 @@
+uid: '27'
+name: cvonsee
+pass: $S$DrpRG556FzuMuCI3aJTyVN4zZxPl9a/4I9zRpeXtOkkmFJ1TXGTV
+mail: cvonsee@apigee.com
+theme: ''
+signature: ''
+signature_format: filtered_html
+created: '1325193893'
+access: '1327224819'
+login: '1327224819'
+status: '1'
+timezone: America/Los_Angeles
+language: ''
+picture: null
+init: cvonsee@apigee.com
+data:
+    ckeditor_default: t
+    ckeditor_show_toggle: t
+    ckeditor_popup: f
+    ckeditor_skin: kama
+    ckeditor_expand: t
+    ckeditor_width: 100%
+    ckeditor_lang: en
+    ckeditor_auto_lang: t
+    gravatar: 1
+uuid: 2f30db60-a9ec-4d74-413e-003569b4ca87
+roles:
+    2: 'authenticated user'
+metatags: {  }
+rdf_mapping:
+    rdftype: ['sioc:UserAccount']
+    name: { predicates: ['foaf:name'] }
+    homepage: { predicates: ['foaf:page'], type: rel }

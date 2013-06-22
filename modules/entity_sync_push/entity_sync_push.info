@@ -10,6 +10,4 @@ dependencies[] = entity_sync
 dependencies[] = entity_sync_deployment
 
 
-files[] = "EntitySyncPush.php"
-files[] = "EntitySyncPushController.php"
-files[] = "EntitySyncPushUIController.php"
+

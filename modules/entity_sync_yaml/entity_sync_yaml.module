@@ -4,75 +4,86 @@
 function entity_sync_yaml_menu() {
   $items = array();
   // entity_sync/<operation>/<enttiy_type>/<uuid>
-  $items['entity_sync/%/%/%'] = array(
+  $items['entity_sync/yaml/view/%entity_sync_yaml_export/%'] = array(
     'title' => 'Entity YAML Operations',
     'page callback' => 'entity_sync_yaml',
-    'page arguments' => array( 1, 2, 3),
+    'page arguments' => array( 2, 3, 4),
     'access callback' => 'entity_sync_yaml_access',
-    'access arguments' => array( 1, 2, 3),
+    'access arguments' => array( 2, 3, 4),
+    'load arguments' => array( 2, 3, 4),
     'description' => 'get entity as yaml.',
-    'type' => MENU_NORMAL_ITEM
+    'type' => MENU_CALLBACK
+  );
+  $items['entity_sync/yaml/update/%entity_sync_yaml_export/%'] = array(
+    'title' => 'Entity YAML Operations',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array( "entity_sync_yaml_update", 2, 3, 4),
+    'access callback' => 'entity_sync_yaml_access',
+    'access arguments' => array( 2, 3, 4),
+    'load arguments' => array( 2, 3, 4),
+    'description' => 'get entity as yaml.',
+    'type' => MENU_CALLBACK
   );
   return $items;
 }
 
-function entity_sync_yaml_access($op, $entity_type, $uuid) {
-  return entity_access($op, $entity_type, entity_sync_load_yaml_entity_by_uuid($uuid));
+function entity_sync_forms() {
+  return array(
+    "entity_sync_yaml_update"
+  );
 }
+
+function entity_sync_yaml_access($op, $entity_type, $uuid) {
+  return true;
+  //$entity = entity_sync_load_yaml_entity_by_uuid($uuid);
+  //return entity_access($op, $entity_type, $entity);
+}
+
+function entity_sync_yaml_export_load($load_arg, $op, $entity_type, $uuid) {
+  $args = func_get_args();
+  $class = ucwords($entity_type);
+  $classname = "Drupal\EntitySync\Export\\{$class}";
+  xdebug_break();
+  
+  try {
+    xdebug_break();
+    $toReturn = @new $classname($uuid);
+  } catch(Exception $e) {
+    $toReturn = new \Drupal\EntitySync\Export\Entity($uuid);
+    if (($toReturn instanceOf \Drupal\EntitySync\Export\Entity) && 
+        ($toReturn->entityType == trim(arg(3)))) {
+      return $toReturn;
+    } else {
+      xdebug_break();
+      watchdog_exception("entity_sync_yaml", $e, "Having trouble instantiating the export class");
+      return false;
+    }
+  }
+  if ($toReturn instanceOf $classname) {
+    return $toReturn;
+  } else {
+    return false;
+  }
+}
+
 
 // example UUID: a3181cdc-6b5c-3854-6daa-b02b78218036
 
-function entity_sync_yaml($op, $entity_type, $uuid) {
-  require_once(libraries_get_path('symfony_yaml')."/Yaml.php");
-  
-  switch($op) {
-    
-    case "update":
-    case "create":
-      $entity = _entity_sync_yaml_get_entity_from_post($uuid);
-      $results = entity_save($entity_type, $entity);
-      echo Symfony\Component\Yaml\Yaml::dump($results, 2); 
-      
-      break;
-
-    
-    case "view":
-    default:
-      $entity = (array)entity_sync_load_yaml_entity_by_uuid($entity_type, $uuid);
-      echo Symfony\Component\Yaml\Yaml::dump($entity, 2); 
-      exit();
-    
-  }
-
+function entity_sync_yaml($op, $exporter, $uuid) {
+  xdebug_break();  
+  $exporter->applyOperation($op);
+  exit();
 }
 
-function entity_sync_load_yaml_entity_by_uuid($entity_type, $uuid) {
-  $info = entity_get_info($entity_type);
-  $q = db_query("select :id_name as id from :table where uuid=:uuid", 
-    array(
-      ":uuid" => $uuid, 
-      ":id_name" => $info['entity keys']['id'], 
-      ":table" => $info['base table']
-      )
-    )->fetchObject();
+function entity_sync_yaml_update($form, &$form_state, $op, $entity_type, $uuid) {
   
-  if (is_object($q) && !empty($q)) {
-    $entity = entity_load($entity_type, array($q->id));
-    return reset($entity);
-  } else {
-    return array();
-  }
+  xdebug_break();
   
+  return $form;
 }
 
-function _entity_sync_yaml_get_entity_from_post($uuid) {
-  $existing = entity_sync_load_yaml_entity_by_uuid($uuid);
-  $entity = (object)Symfony\Component\Yaml\Yaml::parse($_REQUEST['entity_data']);
-  if (empty($entity)) {
-    return $existing;
-  }
-  if(!empty($existing) && is_object($existing)) {
-    $entity->original = $existing;
-  }
-  return $entity;
+function entity_sync_yaml_update_submit($form, &$form_state, $op, $entity_type, $uuid) {
+  
+  xdebug_break();
+  
 }
