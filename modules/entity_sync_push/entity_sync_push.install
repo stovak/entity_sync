@@ -95,6 +95,13 @@ function entity_sync_push_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'title' => array(
+        'description' => 'The nickname of deployment.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
       'remote_uri' => array(
         'description' => 'uri of remote drupal install to which this information will be pushed including base_path',
         'type' => 'varchar',

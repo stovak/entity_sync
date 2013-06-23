@@ -95,6 +95,13 @@ function entity_sync_deployment_schema() {
         'not null' => TRUE,
         'default' => 0,
       ),
+      'title' => array(
+        'description' => 'The nickname of the key file.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
     ),
     'primary key' => array('did'),
     'indexes' => array(
@@ -124,18 +131,18 @@ function entity_sync_deployment_install() {
          'translatable' => '0',
        );
        field_create_field($field);
-
-       $instance = array(
-         'field_name' => 'field_deployment_items',
-         'entity_type' => 'deployment',
-         'label' => 'Deployment Items',
-         'widget' => array(
-           'type' => 'entity_sync_entity_browser',
-         ),
-       );
-       field_create_instance($instance);
    }
   
-  
+  if (!field_info_instance("entity_sync_deployment", "field_deployment_items")) {
+    $instance = array(
+      'field_name' => 'field_deployment_items',
+      'label' => 'Deployment Items',
+      'description' => "Entities associated with this deployment",
+      'widget' => array(
+        'type' => 'entityreference_autocomplete',
+      ),
+    );
+    field_create_instance($instance);
+  }
 }
 

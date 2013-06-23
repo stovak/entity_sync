@@ -1,12 +1,12 @@
-name = Node Sync Deployment
+name = Entity Sync Deployment
 description = Data Entity to create Deployments
 core = 7.x
-package = node_sync
-project = node_sync
+package = entity_sync
+project = entity_sync
 
 dependencies[] = libraries
 dependencies[] = entity
-dependencies[] = node_sync
+dependencies[] = entity_sync
 dependencies[] = entityreference
 
 files[]=node_sync_deployment.inc

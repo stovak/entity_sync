@@ -3,7 +3,7 @@
 namespace Drupal\EntitySync;
   
   
-class EntitySyncPushController extends ControllerBase {
+class PushController extends ControllerBase {
   
   
   
