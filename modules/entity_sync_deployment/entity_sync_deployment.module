@@ -27,9 +27,9 @@ function entity_sync_deployment_entities_info() {
     'controller class'           => 'Drupal\EntitySync\DeploymentController',
     "admin ui"                   => array(
       "controller class"         => 'Drupal\EntitySync\DeploymentUIController',
-      'menu wildcard'            => '%entity_sync_deployment',
+      'menu wildcard'            => '%entity',
       'overview form uri'        => 'entity_sync/deployments',
-      'path'                     => 'entity_sync',
+      'path'                     => 'entity_sync/deployment/%entity',
     ),
     'bundles'                    => array(
       'entity_sync_deployment'    => array(
@@ -41,5 +41,15 @@ function entity_sync_deployment_entities_info() {
   return $items;
 }
 
+function entity_sync_deployment_access($op, $entity_type, $entity_id) {
+  return true;
+}
 
-
+/**
+ * Entity URI callback.
+ */
+function entity_sync_deployment_uri($entity) {
+  return array(
+    'path' => 'nebula_sync/deployment/' . $entity->did,
+  );
+}

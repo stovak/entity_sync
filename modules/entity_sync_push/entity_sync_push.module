@@ -27,8 +27,8 @@ function entity_sync_push_entities_info() {
     'controller class'           => 'Drupal\EntitySync\PushController',
     "admin ui"                   => array(
       "controller class"         => 'Drupal\EntitySync\PushUIController',
-      'menu wildcard'            => '%entity_sync_push',
-      'overview form uri'        => 'entity_sync/pushes'
+      'menu wildcard'            => '%entity',
+      'overview form uri'        => 'entity_sync/push/%entity'
     ),
     'bundles'                    => array(
       'entity_sync_push'    => array(
@@ -42,3 +42,15 @@ function entity_sync_push_entities_info() {
 
 
 
+function entity_sync_push_access() {
+  return true;
+}
+
+/**
+ * Entity URI callback.
+ */
+function entity_sync_push_uri($entity) {
+  return array(
+    'path' => 'nebula_sync/push/' . $entity->pid,
+  );
+}

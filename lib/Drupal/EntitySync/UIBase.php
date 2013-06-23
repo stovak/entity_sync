@@ -62,7 +62,7 @@ class UIBase extends \UICommon {
       'access callback' => 'entity_access',
       'access arguments' => array('update', $this->entityType, $id_count + 1),
     );
-    
+    xdebug_break();
     return $items;
   }
   
