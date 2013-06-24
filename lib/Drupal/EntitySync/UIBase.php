@@ -30,8 +30,8 @@ class UIBase extends \EntityDefaultUIController {
     $items[$this->entityInfo['admin ui']['overview form uri'] . '/add'] = array(
       'title callback' => 'entity_ui_get_action_title',
       'title arguments' => array('add', $this->entityType),
-      'page callback' => 'entity_ui_get_form',
-      'page arguments' => array($this->entityType, NULL, 'add'),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array($this->entityType . '_operation_form', $this->entityType, NULL, 'add'),
       'access callback' => 'entity_access',
       'access arguments' => array('create', $this->entityType),
       'type' => MENU_LOCAL_ACTION,
@@ -67,15 +67,14 @@ class UIBase extends \EntityDefaultUIController {
   }
   
   public function operationForm($form, &$form_state, $entity, $op) {
-    xdebug_break();
     switch($op) {
-      
       case 'delete':
         $label = entity_label($this->entityType, $entity);
         $confirm_question = t('Are you sure you want to delete the %entity %label?', array('%entity' => $this->entityInfo['label'], '%label' => $label));
         return confirm_form($form, $confirm_question, $this->path);
       
       case 'add':
+        xdebug_break();
         return $this->_get_operation_form($form, $form_state, $entity, $op);
         break;
       
@@ -84,6 +83,7 @@ class UIBase extends \EntityDefaultUIController {
         exit();
       
     }
+    
     
   }
   
@@ -100,10 +100,10 @@ class UIBase extends \EntityDefaultUIController {
     $form['actions']['cancel'] = array(
       '#type' => 'link',
       '#title' => t('Cancel'),
-      '#href' => $destination,
+      '#href' => drupal_get_destination(),
     );
     
-    
+    xdebug_break();
   }
 }
 

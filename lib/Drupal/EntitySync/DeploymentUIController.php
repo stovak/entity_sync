@@ -15,12 +15,16 @@ class DeploymentUIController extends UIBase {
     $form['#entity'] = $entity;
     
     $form['title'] = array(
-      "#type" => "text",
+      "#label" => t("Title"),
+      "#description" => "Enter a title for your deployment",
+      "#type" => "textfield",
       "#default_value" => $entity->title
     );
     
-    field_attach_form("deployment", $entity, $form, $form_state);
-    $form .= $this->_getSubmitElements($form, $form_state);
+    field_attach_form("entity_sync_deployment", $entity, $form, $form_state);
+    $this->_getSubmitElements($form, $form_state);
+    xdebug_break();
+    
     return $form;
   }
   
