@@ -3,7 +3,7 @@
 namespace Drupal\EntitySync;
   
   
-class EntityBase extends \EntityCommon {
+class EntityBase extends \Entity {
   
   
   

@@ -4,7 +4,7 @@
  *  
  */
 
-function entity_sync_push_entities_info() {
+function entity_sync_push_entity_info() {
   $items = array();
   $items['entity_sync_push'] = array(
     'label'                      => t('Entity Sync Push'),
@@ -21,14 +21,15 @@ function entity_sync_push_entities_info() {
     'translation' => array(
       'locale' => false,
     ),
-    'access_callback'            => 'entity_sync_push_access',
+    'access callback'            => 'entity_sync_push_access',
     'fieldable'                  => TRUE,
     'entity class'               => 'Drupal\EntitySync\Push',
     'controller class'           => 'Drupal\EntitySync\PushController',
     "admin ui"                   => array(
       "controller class"         => 'Drupal\EntitySync\PushUIController',
       'menu wildcard'            => '%entity',
-      'overview form uri'        => 'entity_sync/push/%entity'
+      'overview form uri'        => 'entity_sync/pushes',
+      'path'                     => 'entity_sync/push',
     ),
     'bundles'                    => array(
       'entity_sync_push'    => array(

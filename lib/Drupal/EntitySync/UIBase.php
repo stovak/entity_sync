@@ -3,7 +3,7 @@
 namespace Drupal\EntitySync;
   
   
-class UIBase extends \UICommon {
+class UIBase extends \EntityDefaultUIController {
   
   
   public function hook_menu() {
@@ -13,7 +13,7 @@ class UIBase extends \UICommon {
     $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%entity_object';
     $plural_label = isset($this->entityInfo['plural label']) ? $this->entityInfo['plural label'] : $this->entityInfo['label'] . 's';
 
-    $items[$this->entityInfo['overview form uri']] = array(
+    $items[$this->entityInfo['admin ui']['overview form uri']] = array(
       'title' => $plural_label,
       'page callback' => 'drupal_get_form',
       'page arguments' => array($this->entityType . '_overview_form', $this->entityType),
@@ -22,12 +22,12 @@ class UIBase extends \UICommon {
       'access arguments' => array('view', $this->entityType),
       'file' => 'includes/entity.ui.inc',
     );
-    $items[$this->entityInfo['overview form uri'] . '/list'] = array(
+    $items[$this->entityInfo['admin ui']['overview form uri'] . '/list'] = array(
       'title' => 'List',
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => -10,
     );
-    $items[$this->entityInfo['overview form uri'] . '/add'] = array(
+    $items[$this->entityInfo['admin ui']['overview form uri'] . '/add'] = array(
       'title callback' => 'entity_ui_get_action_title',
       'title arguments' => array('add', $this->entityType),
       'page callback' => 'entity_ui_get_form',
@@ -67,7 +67,7 @@ class UIBase extends \UICommon {
   }
   
   public function operationForm($form, &$form_state, $entity, $op) {
-    
+    xdebug_break();
     switch($op) {
       
       case 'delete':

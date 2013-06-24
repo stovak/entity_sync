@@ -36,7 +36,6 @@ function entity_sync_autoload($class) {
     default:
         
   }
-  xdebug_break();
   if (isset($class_path) && file_exists($class_path)) {
     require_once($class_path);
   }

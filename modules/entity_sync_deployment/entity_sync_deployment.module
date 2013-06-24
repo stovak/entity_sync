@@ -4,7 +4,7 @@
  *  
  */
 
-function entity_sync_deployment_entities_info() {
+function entity_sync_deployment_entity_info() {
   $items = array();
 
   $items['entity_sync_deployment'] = array(
@@ -21,7 +21,7 @@ function entity_sync_deployment_entities_info() {
     'translation' => array(
       'locale' => false,
     ),
-    'access_callback'            => 'entity_sync_deployment_access',
+    'access callback'            => 'entity_sync_deployment_access',
     'fieldable'                  => TRUE,
     'entity class'               => 'Drupal\EntitySync\Deployment',
     'controller class'           => 'Drupal\EntitySync\DeploymentController',
@@ -29,7 +29,7 @@ function entity_sync_deployment_entities_info() {
       "controller class"         => 'Drupal\EntitySync\DeploymentUIController',
       'menu wildcard'            => '%entity',
       'overview form uri'        => 'entity_sync/deployments',
-      'path'                     => 'entity_sync/deployment/%entity',
+      'path'                     => 'entity_sync/deployment',
     ),
     'bundles'                    => array(
       'entity_sync_deployment'    => array(
