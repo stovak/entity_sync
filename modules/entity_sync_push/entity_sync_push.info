@@ -7,7 +7,7 @@ project = entity_sync
 dependencies[] = libraries
 dependencies[] = entity
 dependencies[] = entity_sync
-dependencies[] = entity_sync_deployment
+;dependencies[] = entity_sync_deployment
 
 
 

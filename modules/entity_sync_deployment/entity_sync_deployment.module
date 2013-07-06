@@ -4,36 +4,42 @@
  *  
  */
 
-function entity_sync_deployment_entity_info() {
-  $items = array();
 
-  $items['entity_sync_deployment'] = array(
-    'label'                      => t('Entity Sync Deployment'),
-    'base table'                 => "entity_sync_deployment",
-    'revision table'             => "entity_sync_deployment_revision",
-    'description'                => "A 'deployment' is a group of entities that can be pulled from another Drupal Installation.",
-    'entity keys'                => array(
-      'id'                       => 'did',
-      'label'                    => 'title',
-      'status'                   => 'status',
-      'revision'                 => 'vid',
+function entity_sync_deployment_entity_info() {
+  $items                            = array();
+
+  $items['entity_sync_deployment']  = array(
+    'label'                         => t('Entity Sync Deployment'),
+    'base table'                    => "entity_sync_deployment",
+    'revision table'                => "entity_sync_deployment_revision",
+    'description'                   => "A 'deployment' is a group of entities that can be pulled from another Drupal Installation.",
+    'entity keys'                   => array(
+      'id'                          => 'did',
+      'label'                       => 'title',
+      'status'                      => 'status',
+      'revision'                    => 'vid',
+      'bundle'                      => "bundle",
     ),
-    'translation' => array(
-      'locale' => false,
+    'translation'                   => array(
+      'locale'                      => false,
     ),
-    'access callback'            => 'entity_sync_deployment_access',
-    'fieldable'                  => TRUE,
-    'entity class'               => 'Drupal\EntitySync\Deployment',
-    'controller class'           => 'Drupal\EntitySync\DeploymentController',
-    "admin ui"                   => array(
-      "controller class"         => 'Drupal\EntitySync\DeploymentUIController',
-      'menu wildcard'            => '%entity',
-      'overview form uri'        => 'entity_sync/deployments',
-      'path'                     => 'entity_sync/deployment',
+    'access callback'               => 'entity_sync_deployment_access',
+    'fieldable'                     => TRUE,
+    'entity class'                  => 'Drupal\EntitySync\Deployment',
+    'controller class'              => 'Drupal\EntitySync\DeploymentController',
+    "admin ui"                      => array(
+      "controller class"            => 'Drupal\EntitySync\DeploymentUIController',
+      'menu wildcard'               => '%entity',
+      'overview form uri'           => 'entity_sync/deployments',
+      'path'                        => 'entity_sync/deployment',
     ),
-    'bundles'                    => array(
-      'entity_sync_deployment'    => array(
-        'label'                  => t('Entity Sync Deployment')
+    'bundles'                       => array(
+      'entity_sync_deployment_type' => array(
+        'label'                     => t('Entity Sync Deployment'),
+        'admin' => array(
+          'path' => 'entity_sync/deployments',
+          'access arguments' => array('administer site configuration'),
+        ),
       ),
     ),
   );
@@ -50,6 +56,6 @@ function entity_sync_deployment_access($op, $entity_type, $entity_id) {
  */
 function entity_sync_deployment_uri($entity) {
   return array(
-    'path' => 'nebula_sync/deployment/' . $entity->did,
+    'path' => 'entity_sync/deployment/' . $entity->did,
   );
 }

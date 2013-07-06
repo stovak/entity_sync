@@ -73,7 +73,7 @@ function entity_sync_deployment_schema() {
       ),
       'vid' => array(
         'description' => 'The primary identifier for this version.',
-        'type' => 'serial',
+        'type' => 'int',
         'unsigned' => TRUE,
         'not null' => TRUE,
       ),
@@ -122,7 +122,8 @@ function entity_sync_deployment_schema() {
   return $schema;
 }
 
-function entity_sync_deployment_install() {
+function entity_sync_deployment_add_deployment_items_field_and_instance() {
+  xdebug_break();
    if(!field_info_field('field_deployment_items')){
      $field = array(
          'field_name' => 'field_deployment_items',
@@ -132,10 +133,13 @@ function entity_sync_deployment_install() {
        );
        field_create_field($field);
    }
-  
-  if (!field_info_instance("entity_sync_deployment", "field_deployment_items")) {
+   $fields = field_info_instances("entity_sync_deployment");
+   xdebug_break();
+  if (!array_key_exists("field_deployment_items", $fields)) {
     $instance = array(
       'field_name' => 'field_deployment_items',
+      'entity_type' => "entity_sync_deployment",
+      'bundle' => "entity_sync_deployment_type",
       'label' => 'Deployment Items',
       'description' => "Entities associated with this deployment",
       'widget' => array(
@@ -144,5 +148,19 @@ function entity_sync_deployment_install() {
     );
     field_create_instance($instance);
   }
+  xdebug_break();
+}
+
+
+function entity_sync_deployment_enable() {
+  
+  entity_sync_deployment_add_deployment_items_field_and_instance();
+  
+}
+
+function entity_sync_deployment_disable() {
+  
+  
+  
 }
 

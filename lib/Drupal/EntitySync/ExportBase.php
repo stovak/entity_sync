@@ -43,7 +43,7 @@
       switch ($op) {
         
         case "view":
-          header("Content-Type: application/x-yaml");
+          header("Content-Type: text/yaml");
           echo $this->__toYaml();
           break;
           

@@ -34,6 +34,8 @@ class UIBase extends \EntityDefaultUIController {
       'page arguments' => array($this->entityType . '_operation_form', $this->entityType, NULL, 'add'),
       'access callback' => 'entity_access',
       'access arguments' => array('create', $this->entityType),
+      "file" => "includes/entity.ui.inc",
+      "file path" => drupal_get_path("module","entity"),
       'type' => MENU_LOCAL_ACTION,
     );
     $items[$this->path ."/". $wildcard] = array(
@@ -61,18 +63,20 @@ class UIBase extends \EntityDefaultUIController {
       'load arguments' => array($this->entityType),
       'access callback' => 'entity_access',
       'access arguments' => array('update', $this->entityType, $id_count + 1),
+      "file" => "includes/entity.ui.inc",
+      "file path" => drupal_get_path("module","entity"),
     );
-    xdebug_break();
     return $items;
   }
   
   public function operationForm($form, &$form_state, $entity, $op) {
-    switch($op) {
+    switch(strtolower($op)) {
       case 'delete':
         $label = entity_label($this->entityType, $entity);
         $confirm_question = t('Are you sure you want to delete the %entity %label?', array('%entity' => $this->entityInfo['label'], '%label' => $label));
         return confirm_form($form, $confirm_question, $this->path);
       
+      case 'save':
       case 'add':
         xdebug_break();
         return $this->_get_operation_form($form, $form_state, $entity, $op);
@@ -87,6 +91,103 @@ class UIBase extends \EntityDefaultUIController {
     
   }
   
+  protected function _get_operation_form($form, &$form_state, $entity, $op) {
+    $class = "\\".$this->entityInfo['entity class'];
+    $label = $this->entityInfo['entity keys']['label'];
+    
+    if (!($entity  instanceof $class)) {
+      $entity = new $class();
+    }
+    $form['#entity'] = $entity;
+    foreach($this->entityInfo['entity keys'] as $key => $entity_property) {
+      if ($key != "label") {
+        $form[$entity_property] = array(
+          "#type" => "value",
+          "#value" => $entity->{$entity_property}
+        );
+      }
+    }
+    
+    $form[$label]     = array(
+      "#label"         => t("Title"),
+      "#description"   => "Enter a title for your ".$this->entityInfo['label'],
+      "#type"          => "textfield",
+      "#default_value" => $entity->$label,
+      "#weight"         => -99
+    );
+    
+    
+    field_attach_form($this->entityType, $entity, $form, $form_state, LANGUAGE_NONE);
+    $this->_getSubmitElements($form, $form_state);    
+    xdebug_break();
+    return $form;
+  }
+  
+  
+  /**
+   * Operation form validation callback.
+   */
+  public function operationFormValidate($form, &$form_state) {
+    $field_instances = field_info_instances($this->entityType, $form_state['values']['bundle']);
+    foreach ($field_instances as $name => $instance) {
+      if (array_key_exists("add_more", $form_state['values'][$name][LANGUAGE_NONE])) {
+        unset($form_state['values'][$name][LANGUAGE_NONE]["add_more"]);
+      }
+    }
+    xdebug_break();
+  }
+
+  /**
+   * Operation form submit callback.
+   */
+  public function operationFormSubmit($form, &$form_state) {
+    $msg = $this->applyOperation($form_state['op'], (object)$form_state["values"]);
+    drupal_set_message($msg);
+    $form_state['redirect'] = $this->entityInfo['admin ui']['overview form uri'];
+  }
+  
+  public function applyOperation($op, $entity) {
+    xdebug_break();
+    if (property_exists($entity, $this->entityInfo['entity keys']["id"]) && $entity->{$this->entityInfo['entity keys']["id"]} == 0) {
+      unset($entity->{$this->entityInfo['entity keys']["id"]});
+      $entity->is_new = 1;
+    } else {
+      $entity->original = entity_load($this->entityType, array($entity->{$this->entityInfo['entity keys']["id"]}));
+    }
+    
+    if (array_key_exists("bundle", $this->entityInfo['entity keys'])) {
+      if (!property_exists($entity, $this->entityInfo['entity keys']['bundle']) && count($this->entityInfo['bundles']) == 1) {
+        $entity->bundle = reset(array_keys($this->entityInfo['bundles']));
+      } 
+    }
+    
+    
+    switch($op) {
+      case "add":
+      case "edit":
+        xdebug_break();
+        entity_get_controller($this->entityType)->save($entity);
+        return "{$this->entityInfo['label']} Information Saved";
+        break;
+        
+      case "delete":
+        if (!property_exists($entity, $this->entityInfo['entity keys']["id"])) {
+          drupal_not_found();
+          exit();
+        } else {
+          entity_get_controller($this->entityType)->delete(array($entity->{$this->entityInfo['entity keys']["id"]}));
+        }
+        return "{$this->entityInfo['label']} Deleted.";
+        break;
+        
+      default:
+        drupal_not_found();
+        exit();
+    }
+  }
+  
+  
+  
   
   protected function _getSubmitElements(&$form, &$form_state){
     
@@ -100,7 +201,7 @@ class UIBase extends \EntityDefaultUIController {
     $form['actions']['cancel'] = array(
       '#type' => 'link',
       '#title' => t('Cancel'),
-      '#href' => drupal_get_destination(),
+      '#href' => "entity_sync/deployments",
     );
     
     xdebug_break();
