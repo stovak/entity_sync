@@ -4,9 +4,9 @@ namespace Drupal\EntitySync;
   
   
 class DeploymentController extends ControllerBase {
-  public function __construct($entityType = null) {
+  public function __construct($entityType = "entity_sync_deployment") {
     xdebug_break();
-    parent::__construct("entity_sync_deployment");
+    parent::__construct($entityType);
   }
   
   

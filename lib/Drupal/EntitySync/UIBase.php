@@ -20,7 +20,8 @@ class UIBase extends \EntityDefaultUIController {
       'description' => 'Manage ' . $plural_label . '.',
       'access callback' => 'entity_access',
       'access arguments' => array('view', $this->entityType),
-      'file' => 'includes/entity.ui.inc',
+      "file" => "includes/entity.ui.inc",
+      "file path" => drupal_get_path("module","entity"),
     );
     $items[$this->entityInfo['admin ui']['overview form uri'] . '/list'] = array(
       'title' => 'List',
@@ -44,13 +45,15 @@ class UIBase extends \EntityDefaultUIController {
       'title arguments' => array($this->entityType, $id_count + 1, "view"),
       'page callback' => 'entity_ui_get_form',
       'page arguments' => array($this->entityType, $id_count + 1, "view"),
-      'load arguments' => array($this->entityType),
+      'load arguments' => array(2),
       'access callback' => 'entity_access',
       'access arguments' => array('update', $this->entityType, $id_count + 1),
+      "file" => "includes/entity.ui.inc",
+      "file path" => drupal_get_path("module","entity"),
     );
     $items[$this->path . "/" . $wildcard . '/view'] = array(
       'title' => 'View',
-      'load arguments' => array($this->entityType),
+      'load arguments' => array(2),
       'type' => MENU_DEFAULT_LOCAL_TASK,
     );
     
@@ -58,18 +61,83 @@ class UIBase extends \EntityDefaultUIController {
       'title' => 'Edit',
       'title callback' => 'entity_label',
       'title arguments' => array($this->entityType, $id_count + 1, $id_count + 2),
-      'page callback' => 'entity_ui_get_form',
-      'page arguments' => array($this->entityType, $id_count + 1, $id_count + 2),
-      'load arguments' => array($this->entityType),
+      'page callback' => 'drupal_get_form',
+      'page arguments' => array($this->entityType . '_operation_form', $this->entityType, 2, 3),
+      'load arguments' => array(2),
       'access callback' => 'entity_access',
-      'access arguments' => array('update', $this->entityType, $id_count + 1),
+      'access arguments' => array('update', $this->entityType, 2),
       "file" => "includes/entity.ui.inc",
       "file path" => drupal_get_path("module","entity"),
     );
+    xdebug_break();
     return $items;
   }
   
+  
+  public function overviewTable($conditions = array()) {
+
+    $query = new \EntityFieldQuery();
+    $query->entityCondition('entity_type', $this->entityType);
+
+    // Add all conditions to query.
+    foreach ($conditions as $key => $value) {
+      $query->propertyCondition($key, $value);
+    }
+
+    if ($this->overviewPagerLimit) {
+      $query->pager($this->overviewPagerLimit);
+    }
+
+    $results = $query->execute();
+
+    $ids = isset($results[$this->entityType]) ? array_keys($results[$this->entityType]) : array();
+    $entities = $ids ? entity_load($this->entityType, $ids, array(), true) : array();
+    xdebug_break();
+    ksort($entities);
+    $rows = array();
+    foreach ($entities as $entity) {
+      $rows[] = $this->overviewTableRow($conditions, entity_id($this->entityType, $entity), $entity);
+    }
+
+    $render = array(
+      '#theme' => 'table',
+      '#header' => $this->overviewTableHeaders($conditions, $rows),
+      '#rows' => $rows,
+      '#empty' => t('None.'),
+    );
+    xdebug_break();
+    return $render;
+  }
+  
+  protected function overviewTableRow($conditions, $id, $entity, $additional_cols = array()) {
+    $entity_uri = entity_uri($this->entityType, $entity);
+    $wildcard = isset($this->entityInfo['admin ui']['menu wildcard']) ? $this->entityInfo['admin ui']['menu wildcard'] : '%entity_object';
+
+    $operations = array();
+    $row = array();
+    $destination = "{$entity->entity_type}/{$entity->entity_id}/keys";
+    if (array_key_exists("entity", $additional_cols)) {
+      $entity = $additional_cols['entity'];
+    } else {
+      $entity = entity_load($entity->entity_type, array($entity->entity_id));
+    }
+    $row["data"]['title'] = check_plain($entity->title);
+    $this->_addLocalOperations($entity, $operations);
+    $row['data']['status'] = @drupal_render($this->_getStatusMenu($entity));
+    foreach (module_implements('_entity_sync_operations') as $module) {
+      $function = $module . '_entity_sync_operations';
+      $function($operations, $entity, $entity);
+    }    
+    $row["data"]['operations'] = theme("entity_sync_operations_menu", array("operations" => $operations));
+    $row['data-key'] = array($entity->key_id);
+    $row['class'] = array(($entity->status)?"active":"revoked");
+    return $row;
+    
+  }
+  
+  
   public function operationForm($form, &$form_state, $entity, $op) {
+    xdebug_break();
     switch(strtolower($op)) {
       case 'delete':
         $label = entity_label($this->entityType, $entity);
@@ -94,7 +162,7 @@ class UIBase extends \EntityDefaultUIController {
   protected function _get_operation_form($form, &$form_state, $entity, $op) {
     $class = "\\".$this->entityInfo['entity class'];
     $label = $this->entityInfo['entity keys']['label'];
-    
+    xdebug_break();
     if (!($entity  instanceof $class)) {
       $entity = new $class();
     }
@@ -206,6 +274,13 @@ class UIBase extends \EntityDefaultUIController {
     
     xdebug_break();
   }
+  
+  protected function _addLocalOperations($entity, &$operations) {
+    $id = entity_id($this->entityType, $entity);
+    $operations['edit'] = l(t('edit'), $this->path ."/". $id . "/edit", array('query' => array("destination" => $this->entityInfo['admin ui']['overview form uri'])) );
+    $operations['delete'] =  l(t('delete'), $this->path . '/' . $id . '/delete', array('query' => array("destination" => $this->entityInfo['admin ui']['overview form uri'])) );
+  }
+  
 }
 
 

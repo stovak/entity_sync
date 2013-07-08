@@ -81,3 +81,33 @@ function entity_sync_field_widget_info() {
   
   return $items;
 }
+
+/**
+ * Implements hook_theme().
+ */
+function entity_sync_theme($existing, $type, $theme, $path) {
+  $items = array();
+  $items['entity_sync_operations_menu'] = array(
+    'variables' => array('operations' => NULL),
+  );
+
+  return $items;
+}
+
+
+/**
+ * Theme callback to wrap opertions menu in bootstrap-compat markup.
+ */
+function theme_entity_sync_operations_menu($variables) {
+  if (array_key_exists("items", $variables['operations'])) {
+    $items = "<ul class='dropdown-menu'>";
+    foreach($variables['operations']['items'] as $action => $link){
+      $items .= "<li class='{$action}'>{$link}</li>";
+    }
+    $items .= "</ul>";
+    return "<div class='btn-group'><a class='btn dropdown-toggle' data-toggle='dropdown' href='#'>Operations<span class='caret'></span></a>{$items}</div>";
+  } else {
+    return "";
+  }
+}
+

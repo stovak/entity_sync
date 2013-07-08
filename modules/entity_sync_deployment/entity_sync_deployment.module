@@ -29,7 +29,7 @@ function entity_sync_deployment_entity_info() {
     'controller class'              => 'Drupal\EntitySync\DeploymentController',
     "admin ui"                      => array(
       "controller class"            => 'Drupal\EntitySync\DeploymentUIController',
-      'menu wildcard'               => '%entity',
+      'menu wildcard'               => '%entity_sync_deployment',
       'overview form uri'           => 'entity_sync/deployments',
       'path'                        => 'entity_sync/deployment',
     ),
@@ -58,4 +58,9 @@ function entity_sync_deployment_uri($entity) {
   return array(
     'path' => 'entity_sync/deployment/' . $entity->did,
   );
+}
+
+function entity_sync_deployment_load($id) {
+  xdebug_break();
+  return entity_get_controller("entity_sync_deployment")->load($id);
 }

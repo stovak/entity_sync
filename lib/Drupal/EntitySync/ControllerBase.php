@@ -11,8 +11,10 @@ class ControllerBase extends \EntityAPIController {
     if (!isset($entity->is_new)) {
       $entity->is_new = empty($entity->key_id);
       $entity->created = time();
+      $entity->vid = 1;
     } else {
       $entity->is_new_revision = TRUE;
+      $entity->vid++;
     }
     if (!empty($entity->{$this->idKey}) && !isset($entity->original)) {
       // In order to properly work in case of name changes, load the original
