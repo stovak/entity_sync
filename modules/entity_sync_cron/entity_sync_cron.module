@@ -1,0 +1,117 @@
+<?php
+
+use Guzzle\Http\Client;
+use Guzzle\Plugin\Cookie\CookiePlugin;
+use Guzzle\Plugin\Cookie\CookieJar\ArrayCookieJar;
+
+function entity_sync_cron_permission() {
+  return array(
+    "administer entity_sync_cron module" => array(
+      "title" => t("Administer the entity_sync_cron module"),
+      "description" => t("Perform administraton tasks for the entity_sync_cron module"),
+      "restrict access" => TRUE,
+      "warning" => "<b>" . t("Giving users access to this permission will give full access to view other users and their data") . "</b>"
+    )
+  );
+}
+
+
+/**
+ * Implements hook_entity_info().
+ */
+function entity_sync_cron_entity_info() {
+  $path = drupal_get_path("module", "entity_sync");
+  $info['entity_sync_cron'] = array(
+    'label' => t('Entity Sync Cron Job'),
+    'base table' => "entity_sync_cron",
+    'revision table' => "entity_sync_cron_revision",
+    'entity keys' => array(
+      'id' => 'jid',
+      'label' => 'title',
+      'status' => 'status',
+      'revision' => 'vid',
+    ),
+    'translation' => array(
+      'locale' => FALSE,
+    ),
+    'access_callback' => 'entity_sync_cron_access',
+    'fieldable' => TRUE,
+    'entity class' => 'Drupal\EntitySync\Cron',
+    'controller class' => 'Drupal\EntitySync\CronController',
+    //'views controller class'    => 'Apigee\Nebula\KeyViewsController',
+    'file' => "CronController.php",
+    'file path' => $path . "/lib/Drupal/EntitySync",
+    "admin ui" => array(
+      "path" => "entity_sync/cron_job/%entity_sync_cron",
+      "controller class" => 'Drupal\EntitySync\CronUIController',
+      'file' => "CronUIController.php",
+      'file path' => $path . "/lib/Drupal/EntitySync",
+      'menu wildcard' => '%entity_sync_cron',
+      'overview form uri' => 'jobs'
+    ),
+    'bundles' => array(
+      "entity_sync_cron" => array(
+        'label' => t('Entity Sync Cron Job'),
+        'admin' => array(
+          'path' => 'key/%entity_sync_cron',
+          'access arguments' => array('administer site configuration'),
+        )
+      ),
+    ),
+  );
+
+  return $info;
+}
+
+
+function entity_sync_cron_access() {
+  return TRUE;
+}
+
+function entity_sync_cron_menu() {
+  $items = array();
+  $items['entity-sync/cron/run'] = array(
+    'title' => 'Cron Run',
+    'page callback' => 'entity_sync_cron_run',
+    'access callback' => "entity_sync_cron_access",
+    'access arguments' => array(),
+    'load arguments' => array(),
+    'description' => 'Simulate cron run.',
+    'type' => MENU_CALLBACK
+  );
+  return $items;
+}
+
+function entity_sync_cron_run() {
+  $toReturn = "";
+  $cookiePlugin = new CookiePlugin(new ArrayCookieJar());
+  $client = new Client('http://sears.apiportal.apigee.com/');
+  $client->addSubscriber($cookiePlugin);
+  $request = $client->post("services/rest/user/login", array("Accept" => "application/json"), array(
+    "username" => "stovak",
+    "password" => "pepsione"
+  ));
+  $response = $request->send();
+  $request = $client->get("entity-sync/user-data/export.json");
+  $response = $request->send();
+  $data = $response->json();
+  foreach ($data as $entity) {
+    $u = user_load_by_mail($entity['mail']);
+    if ($u === FALSE) {
+      $request = $client->get("entity-sync-yaml/view/user/" . $entity['uuid'], array("Accept" => "application/json"));
+      // $response = $request->send();
+      // $new_user = $response->json();
+      print_r($request);
+      exit();
+    }
+    else {
+      $toReturn .= "user exists: {$u->mail}</br>\n\n";
+    }
+  }
+
+  return $toReturn;
+}
+
+function entity_sync_cron_do_sync($entity) {
+
+}

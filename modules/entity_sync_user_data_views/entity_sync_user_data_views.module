@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Entity Sync User-data Views feature.
+ */
+
+include_once 'entity_sync_user_data_views.features.inc';

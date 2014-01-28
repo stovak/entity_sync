@@ -1,26 +1,41 @@
 <?php
 
+function entity_sync_yaml_boot() {
+  require_once (dirname(__FILE__).'/../../vendor/autoload.php');
+}
+
+function entity_sync_yaml_permission() {
+  return array(
+    "administer entity_sync_yaml module" => array(
+      "title" => t("Administer the entity_sync_yaml module"),
+      "description" => t("Perform administration tasks for the entity_sync_yaml module"),
+      "restrict access" => TRUE,
+      "warning" => "<b>" . t("Giving users access to this permission will give full access to view other users and their data") . "</b>"
+    )
+  );
+}
+
 
 function entity_sync_yaml_menu() {
   $items = array();
   // entity_sync/<operation>/<enttiy_type>/<uuid>
-  $items['entity_sync/yaml/view/%entity_sync_yaml_export/%'] = array(
+  $items['entity-sync-yaml/view/%entity_sync_yaml_export/%'] = array(
     'title' => 'Entity YAML Operations',
     'page callback' => 'entity_sync_yaml',
-    'page arguments' => array( 2, 3, 4),
-    'access callback' => 'entity_sync_yaml_access',
-    'access arguments' => array( 2, 3, 4),
-    'load arguments' => array( 2, 3, 4),
+    'page arguments' => array(1, 2, 3),
+    'access callback' => 'user_access',
+    'access arguments' => array("administer entity_sync_yaml module"),
+    'load arguments' => array(1, 2, 3),
     'description' => 'get entity as yaml.',
     'type' => MENU_CALLBACK
   );
-  $items['entity_sync/yaml/update/%entity_sync_yaml_export/%'] = array(
+  $items['entity-sync-yaml/update/%entity_sync_yaml_export/%'] = array(
     'title' => 'Entity YAML Operations',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array( "entity_sync_yaml_update", 2, 3, 4),
-    'access callback' => 'entity_sync_yaml_access',
-    'access arguments' => array( 2, 3, 4),
-    'load arguments' => array( 2, 3, 4),
+    'page arguments' => array("entity_sync_yaml_update", 1, 2, 3),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer entity_sync_yaml module'),
+    'load arguments' => array(1, 2, 3),
     'description' => 'get entity as yaml.',
     'type' => MENU_CALLBACK
   );
@@ -34,35 +49,41 @@ function entity_sync_forms() {
 }
 
 function entity_sync_yaml_access($op, $entity_type, $uuid) {
-  return true;
+  return TRUE;
   //$entity = entity_sync_load_yaml_entity_by_uuid($uuid);
   //return entity_access($op, $entity_type, $entity);
 }
 
 function entity_sync_yaml_export_load($load_arg, $op, $entity_type, $uuid) {
-  $args = func_get_args();
   $class = ucwords($entity_type);
   $classname = "Drupal\EntitySync\Export\\{$class}";
-  xdebug_break();
-  
+  $path = drupal_get_path("module", "entity_sync");
+  $require = "{$path}/lib/".str_replace('\\', '/', $classname).".php";
+	if (!class_exists($classname)) {
+		require_once("{$path}/lib/Drupal/EntitySync/ExportBase.php");
+		require_once("{$path}/lib/Drupal/EntitySync/ExportInterface.php");
+		require_once($require);
+	}
   try {
-    xdebug_break();
-    $toReturn = @new $classname($uuid);
-  } catch(Exception $e) {
+    $toReturn = new $classname($uuid);
+  } catch (Exception $e) {
+	  
     $toReturn = new \Drupal\EntitySync\Export\Entity($uuid);
-    if (($toReturn instanceOf \Drupal\EntitySync\Export\Entity) && 
-        ($toReturn->entityType == trim(arg(3)))) {
+    if (($toReturn instanceOf \Drupal\EntitySync\Export\Entity) &&
+      ($toReturn->entityType == trim(arg(3)))
+    ) {
       return $toReturn;
-    } else {
-      xdebug_break();
+    }
+    else {
       watchdog_exception("entity_sync_yaml", $e, "Having trouble instantiating the export class");
-      return false;
+      return FALSE;
     }
   }
   if ($toReturn instanceOf $classname) {
     return $toReturn;
-  } else {
-    return false;
+  }
+  else {
+    return FALSE;
   }
 }
 
@@ -70,20 +91,14 @@ function entity_sync_yaml_export_load($load_arg, $op, $entity_type, $uuid) {
 // example UUID: a3181cdc-6b5c-3854-6daa-b02b78218036
 
 function entity_sync_yaml($op, $exporter, $uuid) {
-  xdebug_break();  
   $exporter->applyOperation($op);
   exit();
 }
 
 function entity_sync_yaml_update($form, &$form_state, $op, $entity_type, $uuid) {
-  
-  xdebug_break();
-  
   return $form;
 }
 
 function entity_sync_yaml_update_submit($form, &$form_state, $op, $entity_type, $uuid) {
-  
-  xdebug_break();
-  
+
 }

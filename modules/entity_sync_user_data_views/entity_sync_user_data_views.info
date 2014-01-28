@@ -1,0 +1,10 @@
+name = Entity Sync User-data Views
+core = 7.x
+package = EntitySync
+dependencies[] = views
+dependencies[] = views_data_export
+dependencies[] = views_data_export_json
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = entity_sync_user_list
+features_exclude[dependencies][ctools] = ctools

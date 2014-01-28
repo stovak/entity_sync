@@ -1,0 +1,120 @@
+<?php
+
+
+
+function entity_sync_cron_schema() {
+  $schema = array();
+  $schema['entity_sync_cron'] = array(
+    'description' => 'Stores information about cron syncing jobs.',
+    'fields' => array(
+      'jid' => array(
+        'description' => 'The autoincrement id.',
+        'type' => 'serial',
+        'unsigned' => FALSE,
+        'not null' => TRUE,
+      ),
+      'vid' => array(
+        'description' => 'The current {key_revision}.vid version identifier.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+      ),
+      'title' => array(
+        'description' => 'The nickname of the cron job.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'created' => array(
+        'description' => 'The time that the job was created, as a UNIX timestamp.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Is the job enabled or revoked?',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('jid'),
+    'indexes' => array(
+      'did' => array('jid', 'vid'),
+    )
+  );
+
+  $schema['entity_sync_cron_revision'] = array(
+    'description' => 'Revision information for cron jobs.',
+    'fields' => array(
+      'jid' => array(
+        'description' => 'The id to which this revision belongs',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'vid' => array(
+        'description' => 'The primary identifier for this version.',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'uid' => array(
+        'description' => 'keeps track of the user that created the revision.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'changed' => array(
+        'description' => 'The Unix timestamp when the revision was most recently saved.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'status' => array(
+        'description' => 'Is this enabled',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'title' => array(
+        'description' => 'The nickname of the key job.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => ''
+      ),
+      'description' => array(
+        'description' => 'short description of what the job accomplishes.',
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => FALSE,
+        'default' => ''
+      ),
+      'config' => array(
+        'description' => 'guts of the config',
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+      ),
+    ),
+    'primary key' => array('jid'),
+    'indexes' => array(
+      'did' => array('jid', 'vid'),
+    )
+  );
+  return $schema;
+}
+
+function entity_sync_cron_enable() {
+  $tables = entity_sync_cron_schema();
+  foreach ($tables as $table_name => $table_schema) {
+    if (!db_table_exists($table_name)) {
+      db_create_table($table_name, $table_schema);
+    }
+  }
+}

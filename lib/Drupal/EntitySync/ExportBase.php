@@ -16,7 +16,6 @@
       $aClass = explode("\\", strtolower(get_class($this)));
       $entityType = end($aClass);
       $entityInfo = entity_get_info();
-      xdebug_break();
       if (array_key_exists($entityType, $entityInfo)) {
         $this->entityType = $entityType;
         $this->entityInfo = entity_get_info($this->entityType);
@@ -57,13 +56,10 @@
     
     public function findByUUID($uuid) {
       $sql = "select {$this->entityInfo['entity keys']['id']} as id from {$this->entityInfo['base table']} where uuid=:uuid";
-      xdebug_break();
       $q = db_query($sql,  array( ":uuid" => $uuid))
           ->fetchObject();
-      xdebug_break();
       if (is_object($q) && !empty($q)) {
         $entity = entity_load($this->entityType, array($q->id));
-        xdebug_break();
         return reset($entity);
       } else {
         return array();
