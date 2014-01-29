@@ -1,8 +1,8 @@
-name = Node Sync
+name = Entity Sync
 description = Synchronize nodes across multiple drupal installs
 core = 7.x
-package = node_sync
-project = node_sync
+package = EntitySync
+project = EntitySync
 
 dependencies[] = libraries
 dependencies[] = entity

@@ -1,0 +1,54 @@
+<?php
+
+
+function entity_sync_pull_boot() {
+  require_once (dirname(__FILE__).'/../../vendor/autoload.php');
+}
+
+function entity_sync_pull_permission() {
+  return array(
+    "use entity_sync_pull module" => array(
+      "title" => t("Use the entity_sync_pull module"),
+    )
+  );
+}
+
+
+function entity_sync_pull_menu() {
+  $items = array();
+  
+  $items['entity-sync-pull'] = array(
+    'title' => 'EntitySync Pull Establish Connection',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('entity_sync_pull_connect'),
+    'access callback' => true,
+    'file' => 'entity_sync_pull.inc'
+  );
+  
+  $items['entity-sync-pull/connect'] = array(
+    'title' => 'EntitySync Pull Establish Connection',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'file' => 'entity_sync_pull.inc'
+  );
+  
+  return $items;
+}
+
+
+function entity_sync_pull_forms($form_id, $args) {
+  $forms = array();
+  
+  $forms['entity_sync_pull_connect'] = array(
+      'callback' => 'entity_sync_pull_connect',
+  );
+  
+  return $forms;
+}
+
+function entity_sync_pull_menu_alter($menu_items, $arg) {
+  
+  print_r($menu_items);
+  exit();
+  
+}

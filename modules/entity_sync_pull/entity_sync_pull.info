@@ -1,5 +1,5 @@
-name = Entity Sync YAML
-description = Export/Import/Update entity by UUID as YAML
+name = Entity Sync Pull
+description = Log into a remote drupal site and pull an Entity into the local site
 core = 7.x
 package = EntitySync
 project = EntitySync
@@ -7,3 +7,6 @@ project = EntitySync
 dependencies[] = libraries
 dependencies[] = entity
 dependencies[] = entity_sync
+
+
+

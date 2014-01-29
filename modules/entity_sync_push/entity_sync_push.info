@@ -1,8 +1,8 @@
 name = Entity Sync Push
 description = CRUD for enttiy holding remote information & local deployment ref
 core = 7.x
-package = entity_sync
-project = entity_sync
+package = EntitySync
+project = EntitySync
 
 dependencies[] = libraries
 dependencies[] = entity
