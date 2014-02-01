@@ -17,6 +17,7 @@
         "php": ">=5.3.3",
         "guzzle/guzzle": ">=3.7",
         "symfony/yaml": ">=2.1",
+        "symfony/dependency-injection": ">=2.1",
         "psr/log": "1.*"
     },
 

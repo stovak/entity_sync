@@ -1,8 +1,5 @@
 <?php
 
-function entity_sync_yaml_boot() {
-  require_once (dirname(__FILE__).'/../../vendor/autoload.php');
-}
 
 function entity_sync_yaml_permission() {
   return array(
@@ -19,27 +16,39 @@ function entity_sync_yaml_permission() {
 function entity_sync_yaml_menu() {
   $items = array();
   // entity_sync/<operation>/<enttiy_type>/<uuid>
-  $items['entity-sync-yaml/view/%entity_sync_yaml_export/%'] = array(
+  $items['entity/sync/%/list/%/%'] = array(
+    'title' => 'Entity YAML list',
+    'page callback' => 'entity_sync_yaml_list',
+    'page arguments' => array(4, 5, 2),
+    'access callback' => true,
+    'file' => 'entity_sync_yaml.inc'
+  );
+  $items['entity/sync/yaml/view/%entity_sync_yaml_export/%'] = array(
     'title' => 'Entity YAML Operations',
     'page callback' => 'entity_sync_yaml',
-    'page arguments' => array(1, 2, 3),
+    'page arguments' => array(3, 4, 5),
     'access callback' => 'user_access',
     'access arguments' => array("administer entity_sync_yaml module"),
-    'load arguments' => array(1, 2, 3),
+    'load arguments' => array(3, 4, 5),
     'description' => 'get entity as yaml.',
     'type' => MENU_CALLBACK
   );
-  $items['entity-sync-yaml/update/%entity_sync_yaml_export/%'] = array(
+  $items['entity/sync/yaml/update/%entity_sync_yaml_export/%'] = array(
     'title' => 'Entity YAML Operations',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array("entity_sync_yaml_update", 1, 2, 3),
+    'page arguments' => array("entity_sync_yaml_update", 3, 3, 5),
     'access callback' => 'user_access',
     'access arguments' => array('administer entity_sync_yaml module'),
-    'load arguments' => array(1, 2, 3),
+    'load arguments' => array(3, 4, 5),
     'description' => 'get entity as yaml.',
     'type' => MENU_CALLBACK
   );
   return $items;
+}
+
+function entity_sync_yaml_menu_alter(&$items) {
+  
+  
 }
 
 function entity_sync_forms() {
@@ -102,3 +111,5 @@ function entity_sync_yaml_update($form, &$form_state, $op, $entity_type, $uuid) 
 function entity_sync_yaml_update_submit($form, &$form_state, $op, $entity_type, $uuid) {
 
 }
+
+

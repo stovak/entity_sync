@@ -2,7 +2,8 @@
 
 
 function entity_sync_pull_boot() {
-  require_once (dirname(__FILE__).'/../../vendor/autoload.php');
+  module_load_include("module", "entity_sync");
+  spl_autoload_register('entity_sync_autoload');
 }
 
 function entity_sync_pull_permission() {
@@ -17,21 +18,42 @@ function entity_sync_pull_permission() {
 function entity_sync_pull_menu() {
   $items = array();
   
-  $items['entity-sync-pull'] = array(
-    'title' => 'EntitySync Pull Establish Connection',
+  $items['entity/sync/pull'] = array(
+    'title' => t('Connect'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('entity_sync_pull_connect'),
     'access callback' => true,
-    'file' => 'entity_sync_pull.inc'
+    'file' => 'entity_sync_pull.inc',
+    'description' => t("Connection settings for remote site.")
+      
   );
   
-  $items['entity-sync-pull/connect'] = array(
-    'title' => 'EntitySync Pull Establish Connection',
+  $items['entity/sync/pull/connect'] = array(
+    'title' => t('Connect'),
     'type' => MENU_DEFAULT_LOCAL_TASK,
     'weight' => -10,
     'file' => 'entity_sync_pull.inc'
   );
   
+  $items['entity/sync/pull/entities'] = array(
+    'title' => t('List'),
+    'page callback' => 'entity_sync_pull_entities',
+    'access callback' => true,
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 0,
+    'file' => 'entity_sync_pull.inc',
+    'description' => t("List pullable entities from remote")
+  );
+  
+  $items['entity/sync/pull/entity/%/%'] = array(
+    'title' => t('Bundle'),
+    'page callback' => 'entity_sync_pull_bundle',
+    'page arguments' => array( 4 , 5),
+    'access callback' => true,
+    'weight' => 0,
+    'file' => 'entity_sync_pull.inc',
+    'description' => t("List entity items")
+  );
   return $items;
 }
 
@@ -46,9 +68,73 @@ function entity_sync_pull_forms($form_id, $args) {
   return $forms;
 }
 
-function entity_sync_pull_menu_alter($menu_items, $arg) {
+function entity_sync_pull_theme($existing) {
+  return array(
+    "entity_sync_pull_entity_list" => array(
+      "variables" => array("entities" => array())
+    ),
+    "entity_sync_pull_entity_list_item" => array(
+      "variables" => array("entity" => array(), "entity_type_id" => "")
+    ),
+    "entity_sync_pull_bundle_link" => array(
+      "variables" => array("entity_type_id" => "node", "bundle" => array(), "bundle_type_id" => "all", "classes" => array())
+    ),
+  );
+}
+
+function theme_entity_sync_pull_entity_list($vars) {
+  $entities = $vars['entities'];
+  $list = "";
+  foreach ($entities as $entity_type_id => $entity) {
+    $list .= theme("entity_sync_pull_entity_list_item", array("entity" => $entity,  "entity_type_id" => $entity_type_id));
+  }
+  return $list;
+}
+
+function theme_entity_sync_pull_entity_list_item($vars) {
+  $entity = $vars['entity'];
+  $entity_type_id = $vars['entity_type_id'];
+  $content = "<div class='panel-heading entity-sync-entity' data-entity-type-id='{$entity_type_id}'><h3 class='panel-title'>{$entity['label']}</h3></div>";
+  //glyphicon glyphicon-chevron-right
+  if (is_array($entity['bundles']) && !empty($entity['bundles'])) {
+    $content .= '<div class="list-group" data-entity-type-id="'.$entity_type_id.'">';
+    $content .= theme("entity_sync_pull_bundle_link", array(
+      "entity_type_id" => $entity_type_id, "bundle" => array("label" => "All"), "bundle_type_id" => "all", "classes" => array("list-group-item")
+    ));
+    foreach ($entity['bundles'] as $bundle_type_id => $bundle) {
+      $content .= theme("entity_sync_pull_bundle_link", array(
+        "entity_type_id" => $entity_type_id, "bundle" => $bundle, "bundle_type_id" => $bundle_type_id, "classes" => array("list-group-item")
+      ));
+    }
+    $content .= '</div>';
+  } else {
+    $content .= '<div class="panel-body"><a href="#" class="entity-sync-bundle" data-bundle-type-id="none">Get '.$entity['label'].' list</a></div>';
+  }
   
-  print_r($menu_items);
-  exit();
+  return '<div class="panel panel-default" data-entity-id="'.$id.'">'.$content.'</div>';
+  
+  
+  //return '<li class="list-group-item">'.$entity['label'].'</li>';
+}
+
+function theme_entity_sync_pull_bundle_link($vars) {
+  if (!is_array($vars['classes'])) {
+    $classes = array($vars['classes'], "entity-sync-bundle");
+  } else {
+    $classes =  $vars['classes'] + array("entity-sync-bundle");
+  }
+  return l($vars['bundle']['label'], "entity/sync/pull/entity/{$vars['entity_type_id']}/{$vars['bundle_type_id']}", 
+    array("attributes" => array("class" => $classes, 'data-bundle-id' => $vars['bundle_type_id']))
+  );
   
 }
+
+function _entity_sync_get_remote() {
+  if (!array_key_exists("entity_sync_remote", $_SESSION)) {
+    drupal_set_message("You must first set the remote connection settings");
+    drupal_goto("entity/sync/pull/connect");
+  }
+  return new \Drupal\EntitySync\Remote($_SESSION['entity_sync_remote']);
+}
+
+
