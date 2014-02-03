@@ -129,12 +129,6 @@ function theme_entity_sync_pull_bundle_link($vars) {
   
 }
 
-function _entity_sync_get_remote() {
-  if (!array_key_exists("entity_sync_remote", $_SESSION)) {
-    drupal_set_message("You must first set the remote connection settings");
-    drupal_goto("entity/sync/pull/connect");
-  }
-  return new \Drupal\EntitySync\Remote($_SESSION['entity_sync_remote']);
-}
+
 
 

@@ -1,0 +1,30 @@
+<?php
+
+function entity_sync_diff_menu() {
+  $items = array();
+  
+  $items['entity/sync/diff/%/%'] = array(
+    'title' => t('diff'),
+    'page callback' => 'entity_sync_diff_get_options',
+    'page arguments' => array(3,4),
+    'access callback' => true,
+    'file' => 'entity_sync_diff.inc',
+    'description' => t("Diff a local entity_type/UUID to a remote one.")
+  );
+  
+  return $items;
+  
+}
+
+
+
+function entity_sync_diff_theme() {
+  $path = drupal_get_path("module", "entity_sync_diff");
+  return array(
+    "entity_sync_diff_get_options" => array(
+      "variables" => array("icon_classes" => array(), "button_classes" => array(), "message" => "", "base_element" => "button"),
+      "template" => "entity-sync-diff-get-options",
+      "path" => $path."/templates"
+    )
+  );
+}

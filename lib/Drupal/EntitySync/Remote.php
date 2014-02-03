@@ -9,17 +9,56 @@ use Symfony\Component\Yaml\Yaml;
 
 class Remote {
   
+  /**
+   * Guzzle Client object
+   *
+   * @var Client $client
+   */
   private $client;
+  
+  /**
+   * URL of remote
+   *
+   * @var string
+   */
   private $url;
+  
+  /**
+   * location of REST servers on Remote
+   *
+   * @var string
+   */
   private $services;
+  
+  /**
+   * username for rest auth
+   *
+   * @var string
+   */
   private $username;
+  
+  /**
+   * password for rest auth
+   *
+   * @var string
+   */
   private $password;
+  
+  /**
+   * Keeper of the session cookie
+   *
+   * @var string
+   */
   private $cookiePlugin;
   
+  /**
+   * constructor
+   *
+   * @param array $remote 
+   * @author stovak
+   */
   function __construct($remote) {
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
+
     foreach ($remote as $key => $value) {
       $k = str_replace("remote-", "", $key);
       $this->$k = $value;
@@ -27,62 +66,78 @@ class Remote {
     $this->doLogin();
   }
   
+  /**
+   * Do the action of logging in to remote server
+   *
+   * @return void
+   * @author stovak
+   */
   private function doLogin() {
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
     $this->client = new Client($this->url);
     $this->cookiePlugin = new CookiePlugin(new ArrayCookieJar());
     $this->client->addSubscriber($this->cookiePlugin);
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
     $this->post($this->services."/user/login.json", array("Accept" => "application/json"), array(
         "username" => $this->username,
         "password" => $this->password
       ), "json"
     );
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
   }
-  
-  private function isLoggedIn(){
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
-    return true;
-  } 
-   
+     
+  /**
+   * get action to receive response from remote
+   *
+   * @param string $uri 
+   * @param string $format 
+   * @return void
+   * @author stovak
+   */
   function get($uri, $format = "yaml") {
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
-    $request = $this->client->get($uri);
+    $request = $this->client->get($uri, array("Accept:" =>"text/{$format},application/{$format}"));
     return $this->formatResponse($request->send(), $format);
   }
-  
-  function post($uri, $headers, $values, $format = "yaml") {
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
-    }
+  /**
+   * post action to receive response from remote
+   *
+   * @param string $uri 
+   * @param array $headers 
+   * @param array $values 
+   * @param string $format 
+   * @return void
+   * @author stovak
+   */
+  function post($uri, $headers = array(), $values = array(), $format = "yaml") {
+    $headers['Accept'] = "text/{$format},application/{$format}";
     $request = $this->client->post( $uri , $headers , $values );
     return $this->formatResponse($request->send(), $format);
   }
   
-  private function formatResponse($response, $format) {
-    if (function_exists("xdebug_break")) {
-      xdebug_break();
+  /**
+   * format the response from remote
+   *
+   * @param Response $response 
+   * @param string $format 
+   * @return void
+   * @author stovak
+   */
+  private function formatResponse(\Guzzle\Http\Message\MessageInterface $response, $format) { 
+    $message = array();
+    if (in_array($response->getStatusCode(), array(200, 201, 202))) {
+      $message = $response->getBody();
     }
-    switch ($format) {
+      switch ($format) {
+      
+        case "response":
+          return $response;
+          break;
     
-      case "json":
-        return $response->json();
-        break;
+        case "json":
+          return json_decode($message, true);
+          break;
     
-      default: 
-        return Yaml::parse($response->getBody(), 5);
-    }
+        default: 
+          return Yaml::parse($message, 5);
+      }
+    
   }
   
 }

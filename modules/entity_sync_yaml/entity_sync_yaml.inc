@@ -1,8 +1,7 @@
 <?php
 
 
-function entity_sync_yaml_list($type, $bundle = "all", $format="YAML") {
-  xdebug_break();
+function entity_sync_yaml_list($type, $bundle = "all", $format="yaml") {
   switch($type) {
     case "entities":
       $response = entity_get_info();
@@ -16,17 +15,8 @@ function entity_sync_yaml_list($type, $bundle = "all", $format="YAML") {
         $query->propertyCondition("bundle", $bundle);
       }
       $results = $query->execute();
-      $response = (array_key_exists($results, $type)?$results[$type]:array());
-  }
-  
-  switch ($format) {
     
-    case "json":
-      echo json_encode($response, true);
-      break;
-    
-    default: 
-      echo Symfony\Component\Yaml\Yaml::dump($response, 5);
+      $response = entity_load($type, (array_key_exists($type,$results)?array_keys($results[$type]):array()));
   }
-  exit();
+  return \Drupal\EntitySync\Response::emit($response);
 }
